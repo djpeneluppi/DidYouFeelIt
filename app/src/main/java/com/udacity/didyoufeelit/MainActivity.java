@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
         // Update the information displayed to the user.
 //        updateUi(earthquake);
 
+        // Create an {@link AsyncTask} to perform the HTTP request to the given URL
+        // on a background thread. When the result is received on the main UI thread,
+        // then update the UI.
         EarthquakeAssyncTask task = new EarthquakeAssyncTask();
         task.execute(USGS_REQUEST_URL);
     }
@@ -65,12 +68,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Event doInBackground(String... urls) {
+            // Não execute o pedido se não houver URLs ou se for nula
+            if (urls.length < 1 || urls[0] == null) {
+                return null;
+            }
             Event result = com.udacity.didyoufeelit.Utils.fetchEarthquakeData(urls[0]);
             return result;
         }
 
         @Override
         protected void onPostExecute(Event result) {
+            // Se não houver resultados, não faça nada.
+            if (result == null) {
+                return;
+            }
             updateUi(result);
         }
     }
